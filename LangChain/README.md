@@ -1,4 +1,4 @@
 This repo is my self-study notes on how to use LangChain as a framework in developing AI application. The study materials are extracted from [DeepLearning.AI](https://learn.deeplearning.ai/?utm_campaign=platform-engagement&utm_medium=sidebar&utm_source=discourse) course of
-- ` LangChain for LLM Application Development`() 
-- `LangChain Chat with Your Data` ()
-- `Functions, Tools and Agents with LangChain`. ()
+- [`LangChain for LLM Application Development`](https://learn.deeplearning.ai/courses/langchain/lesson/u9olq/introduction) 
+- [`LangChain Chat with Your Data`](https://learn.deeplearning.ai/courses/langchain-chat-with-your-data/lesson/snupv/introduction)
+- [`Functions, Tools and Agents with LangChain`](https://learn.deeplearning.ai/courses/functions-tools-agents-langchain/lesson/rtwb1/introduction)
