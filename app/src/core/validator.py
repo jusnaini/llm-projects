@@ -7,7 +7,7 @@ import re
 from typing import Dict, Optional
 from dataclasses import asdict
 
-from src.utils.utils import AircraftJourneyForm, FieldExtraction
+from ..utils.utils import AircraftJourneyForm, FieldExtraction
 
 
 class FieldValidator:

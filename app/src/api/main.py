@@ -1,6 +1,12 @@
+# Fix the path for relative imports
+import sys 
+import os
+sys.path.append(os.path.dirname(__file__))
+
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.router import router
+from .router import router
 from dotenv import load_dotenv
 
 # Load environment variables

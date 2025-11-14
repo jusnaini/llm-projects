@@ -9,8 +9,8 @@ from mistralai import Mistral, ImageURLChunk, TextChunk
 from datetime import datetime
 from typing import Dict, Any, List, Optional, Tuple
 import os
-from src.utils.utils import AircraftJourneyForm
-from src.settings import MISTRAL_API_KEY
+from ..utils.utils import AircraftJourneyForm
+from ..settings import MISTRAL_API_KEY
 import uuid
 
 class MistralFormExtractor:

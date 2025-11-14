@@ -1,8 +1,8 @@
 from fastapi import APIRouter, UploadFile, File, Form, Body
 from typing import Dict, Any
 
-from src.api.endpoint import EndpointHandler
-from src.api.request import EvaluationRequest
+from .endpoint import EndpointHandler
+from .request import EvaluationRequest
 
 # Create router
 router = APIRouter()

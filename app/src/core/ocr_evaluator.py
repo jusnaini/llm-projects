@@ -1,7 +1,8 @@
-from validator import FieldValidator
+from .validator import FieldValidator
 from typing import Optional, Dict, Any
 from dataclasses import asdict
-import ocr_metrics
+from .ocr_metrics import compute_accuracy, distance,char_error_rate,word_error_rate
+
 
 
 AIRCRAFT_FIELDS = [
@@ -52,10 +53,10 @@ def _get_metrics_result (extracted: Dict[str, Any], edited: Dict[str, Any]):
         result[key] = {
             "Ground_Truth": gt_val,
             "OCR_Output": ocr_val,
-            "Correct": ocr_metrics.compute_accuracy(gt_val, ocr_val),
-            "Levenshtein": ocr_metrics.distance(gt_val, ocr_val),
-            "CER": round(ocr_metrics.char_error_rate(gt_val, ocr_val), 4),
-            "WER": round(ocr_metrics.word_error_rate(gt_val, ocr_val), 4),
+            "Correct": compute_accuracy(gt_val, ocr_val),
+            "Levenshtein": distance(gt_val, ocr_val),
+            "CER": round(char_error_rate(gt_val, ocr_val), 4),
+            "WER": round(word_error_rate(gt_val, ocr_val), 4),
         }
 
     return result
