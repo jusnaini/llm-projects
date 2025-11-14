@@ -5,12 +5,12 @@ import json
 from pathlib import Path
 import os
 import pandas as pd
-from ocr_evaluator import ocr_overall_evaluation
+from src.core.ocr_evaluator import ocr_overall_evaluation
 
-from mistral_client import MistralFormExtractor
-from aws_utils import upload_file_to_s3_folder, upload_json_to_s3_folder, upload_dataframe_to_s3_folder
-from ocr_metrics import calculate_ocr_metrics
-from request import EvaluationRequest
+from src.core.mistral_client import MistralFormExtractor
+from src.utils.aws_utils import upload_file_to_s3_folder, upload_json_to_s3_folder, upload_dataframe_to_s3_folder
+from src.core.ocr_metrics import calculate_ocr_metrics
+from src.api.request import EvaluationRequest
 
 # Configuration
 class Config:
