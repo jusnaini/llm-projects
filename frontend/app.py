@@ -16,6 +16,7 @@ st.write("Upload a scanned aircraft journey form to extract structured informati
 # Initialize session state
 if 'extracted_data' not in st.session_state:
     st.session_state.extracted_data = None
+    st.session_state.ocr_text = None
 if 'edited_data' not in st.session_state:
     st.session_state.edited_data = None
 if 'upload_id' not in st.session_state:
@@ -52,6 +53,8 @@ if uploaded_file:
                         st.success("✅ Extraction complete!")
                         
                         extracted_data = res["data"]
+                        # Added to accept ocr_markdown_text
+                        ocr_text = res["ocr_text"]
                         
                         # Generate unique upload ID if not present
                         if "Upload_ID" not in extracted_data or not extracted_data["Upload_ID"]:
@@ -62,6 +65,7 @@ if uploaded_file:
                         st.session_state.extracted_data = extracted_data
                         st.session_state.edited_data = extracted_data.copy()
                         st.session_state.upload_id = extracted_data["Upload_ID"]
+                        st.session_state.ocr_text = ocr_text
                         
                     else:
                         st.error(f"❌ Extraction Error: {res.get('message', 'Unknown error')}")
@@ -80,6 +84,7 @@ if uploaded_file:
 if st.session_state.extracted_data:
     extracted_data = st.session_state.extracted_data
     upload_id = st.session_state.upload_id
+    ocr_text = st.session_state.ocr_text 
     
     # Display the extracted data
     st.write("### 📋 Extracted Data")
@@ -148,7 +153,8 @@ if st.session_state.extracted_data:
                         "http://localhost:8000/evaluate-ocr/",
                         json={
                             "extracted": extracted_version,
-                            "edited": edited_version
+                            "edited": edited_version,
+                            "ocr_text": ocr_text
                         },
                         timeout=15
                     )
@@ -159,7 +165,7 @@ if st.session_state.extracted_data:
                         st.write(f"Results saved at: `{eval_result.get('local_path')}`")
                         if 's3_result' in eval_result:
                             st.info(f"☁️ Uploaded to S3: {eval_result['s3_result']}")
-                        st.dataframe(eval_result.get("sample", []))
+                        # st.dataframe(eval_result.get("sample", []))
                     else:
                         st.error(f"❌ Evaluation failed: {res_eval.text}")
 

@@ -10,6 +10,12 @@ class FormData(BaseModel):
     class Config:
         extra = "allow"  # Allow additional fields
 
+
 class EvaluationRequest(BaseModel):
     extracted: Dict[str, Any]
     edited: Dict[str, Any]
+    ocr_text: Optional[str] = ""  # Make it optional with default value
+    
+    class Config:
+        # Allow extra fields and don't validate field types strictly
+        extra = "allow"

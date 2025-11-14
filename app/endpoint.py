@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import os
 import pandas as pd
+from ocr_evaluator import ocr_overall_evaluation
 
 from mistral_client import MistralFormExtractor
 from aws_utils import upload_file_to_s3_folder, upload_json_to_s3_folder, upload_dataframe_to_s3_folder
@@ -54,7 +55,7 @@ class EndpointHandler:
             
             # Run extraction
             print("🔍 Running OCR extraction...")
-            result, _ = extractor.structured_ocr(str(file_path))
+            result, ocr_text = extractor.structured_ocr(str(file_path))
             
             # Convert to dict
             result_dict = json.loads(result.json())
@@ -66,17 +67,18 @@ class EndpointHandler:
             
             return {
                 "status": "success", 
-                "data": result_dict
+                "data": result_dict,
+                "ocr_text":ocr_text, # to generate comprehensive result
             }
         except Exception as e:
             print(f"❌ Error in extract_form: {type(e).__name__}: {e}")
             return {"status": "error", "message": str(e)}
     
     @staticmethod
-    async def save_extracted_data(data: Dict[str, Any]):  # Remove Body(...) from here
+    async def save_extracted_data(data: Dict[str, Any]):  
         try:
             print(f"📥 Received save-extracted request")
-            print(f"📦 Data keys: {list(data.keys())}")  # Debug print
+            print(f"📦 Data keys: {list(data.keys())}")  
             
             upload_id = data.get("Upload_ID", "unknown")
             version = data.get("version", "extracted")
@@ -102,10 +104,10 @@ class EndpointHandler:
             raise HTTPException(status_code=500, detail=str(e))
     
     @staticmethod
-    async def save_edited_data(data: Dict[str, Any]):  # Remove Body(...) from here
+    async def save_edited_data(data: Dict[str, Any]): 
         try:
             print(f"📥 Received save-edited request")
-            print(f"📦 Data keys: {list(data.keys())}")  # Debug print
+            print(f"📦 Data keys: {list(data.keys())}")  
             
             upload_id = data.get("Upload_ID", "unknown")
             version = data.get("version", "edited")
@@ -137,45 +139,60 @@ class EndpointHandler:
             
             extracted = data.extracted
             edited = data.edited
+            ocr_text = data.ocr_text
             
             if not extracted or not edited:
                 raise ValueError("Missing extracted or edited data in request")
             
-            upload_id = edited.get("Upload_ID", "unknown")
+            # Extract Upload_ID from the data
+            upload_id = extracted.get("Upload_ID") or edited.get("Upload_ID", "unknown")
             print(f"Evaluating OCR accuracy for Upload_ID={upload_id}")
+                     
+            # Run evaluation with extracted, edited, and ocr_text
+            # This should return your rich structure with extracted_data, data_validation, metadata, results
+            evaluation_results = ocr_overall_evaluation(extracted, edited, ocr_text)
             
-            # Run evaluation
-            results = calculate_ocr_metrics(extracted, edited)
+            print(f"✅ Evaluation complete! Result keys: {list(evaluation_results.keys())}")
             
-            # Save locally as CSV
-            df = pd.DataFrame(results)
-            local_path = config.RESULTS_DIR / f"{upload_id}_result.csv"
-            df.to_csv(local_path, index=False)
-            print(f"✅ Results saved locally at {local_path}")
+            # Save the rich evaluation results as JSON
+            json_filename = f"{upload_id}_evaluation.json"
+            json_path = config.RESULTS_DIR / json_filename
             
-            # Upload to S3
-            s3_uri = None
+            with open(json_path, "w") as f:
+                json.dump(evaluation_results, f, indent=2)
+            
+            print(f"✅ Evaluation JSON saved locally at {json_path}")
+            
+            # Upload JSON to S3
+            s3_json_uri = None
             try:
-                s3_uri = upload_dataframe_to_s3_folder(
-                    df, config.RESULTS_PREFIX, f"{upload_id}_result.csv"
+                s3_key = f"{config.RESULTS_PREFIX}/{json_filename}"
+                print(f"☁️ Uploading JSON to S3: {s3_key}")
+                s3_json_uri = upload_json_to_s3_folder(
+                    json.dumps(evaluation_results), 
+                    s3_key=s3_key
                 )
-                print(f"☁️ Uploaded results to S3: {s3_uri}")
+                print(f"✅ S3 JSON upload successful: {s3_json_uri}")
             except Exception as s3_error:
-                print(f"⚠️ S3 upload failed: {s3_error}")
-                s3_uri = f"S3 upload failed: {s3_error}"
+                print(f"⚠️ S3 JSON upload failed: {s3_error}")
+                s3_json_uri = f"S3 upload failed: {s3_error}"
             
+            # Return summary
             return {
                 "status": "success",
                 "upload_id": upload_id,
-                "record_count": len(results),
-                "local_path": str(local_path),
-                "s3_result": s3_uri,
-                "sample": results[:5],
+                "local_path": str(json_path),
+                "s3_result": s3_json_uri,
+                "metadata": evaluation_results.get('metadata', {}),
+                "sample": evaluation_results.get('results', {})
             }
+            
         except Exception as e:
             print(f"❌ Error in evaluate_ocr_results: {e}")
+            import traceback
+            traceback.print_exc()
             raise HTTPException(status_code=500, detail=str(e))
-    
+                
     @staticmethod
     async def save_uploaded_form(file: UploadFile, upload_id: str):
         try:
