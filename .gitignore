@@ -4,3 +4,5 @@ __pycache__/
 
 # Optionally, also ignore .pyc files directly
 *.pyc
+
+data/
