@@ -1,0 +1,151 @@
+{
+  "extracted_data": {
+    "Upload_ID": "AJ-20251116-015954-1082a234",
+    "Extracted_AT": "2025-11-16T01:59:54.999065",
+    "Aircraft_Model": "Airbus A320",
+    "Registration_Number": "9M-XX1",
+    "Departure_Airport": "KUL",
+    "Arrival_Airport": "SIN",
+    "Crew": 4,
+    "Fuel": "12k",
+    "Load": 150,
+    "Defect_Message": "WAT POWL DS 244161 AND DS 244162 AL USS THAN CONTROL AND AC USS THAN PD ON POWL UT TO BE UNVOLVER A PROMIVE."
+  },
+  "data_validation": {
+    "Aircraft_Model": {
+      "value": "Airbus A320",
+      "confidence": 1.0,
+      "validated": true,
+      "validation_method": "known_model",
+      "reason": null
+    },
+    "Registration_Number": {
+      "value": "9M-XX1",
+      "confidence": 0.9,
+      "validated": true,
+      "validation_method": "regex_pattern",
+      "reason": null
+    },
+    "Departure_Airport": {
+      "value": "KUL",
+      "confidence": 0.95,
+      "validated": true,
+      "validation_method": "iata_validation",
+      "reason": null
+    },
+    "Arrival_Airport": {
+      "value": "SIN",
+      "confidence": 0.95,
+      "validated": true,
+      "validation_method": "iata_validation",
+      "reason": null
+    },
+    "Crew": {
+      "value": 4,
+      "confidence": 1.0,
+      "validated": true,
+      "validation_method": "range_check_2_20",
+      "reason": null
+    },
+    "Fuel": {
+      "value": "12k",
+      "confidence": 1.0,
+      "validated": true,
+      "validation_method": "contains_numeric",
+      "reason": null
+    },
+    "Load": {
+      "value": 150,
+      "confidence": 1.0,
+      "validated": true,
+      "validation_method": "range_check_0_500",
+      "reason": null
+    },
+    "Defect_Message": {
+      "value": "WAT POWL DS 244161 AND DS 244162 AL USS THAN CONTROL AND AC USS THAN PD ON POWL UT TO BE UNVOLVER A PROMIVE.",
+      "confidence": 0.48999999999999994,
+      "validated": false,
+      "validation_method": null,
+      "reason": "freetext_low_confidence"
+    }
+  },
+  "data_assessment": {
+    "Upload_ID": "AJ-20251116-015954-1082a234",
+    "Aircraft_Model": {
+      "Ground_Truth": "Airbus A320",
+      "OCR_Output": "Airbus A320",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Registration_Number": {
+      "Ground_Truth": "9M-XX1",
+      "OCR_Output": "9M-XX1",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Departure_Airport": {
+      "Ground_Truth": "KUL",
+      "OCR_Output": "KUL",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Arrival_Airport": {
+      "Ground_Truth": "SIN",
+      "OCR_Output": "SIN",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Crew": {
+      "Ground_Truth": "4",
+      "OCR_Output": "4",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Fuel": {
+      "Ground_Truth": "12k",
+      "OCR_Output": "12k",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Load": {
+      "Ground_Truth": "150",
+      "OCR_Output": "150",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    },
+    "Defect_Message": {
+      "Ground_Truth": "WAT POWL DS 244161 AND DS 244162 AL USS THAN CONTROL AND AC USS THAN PD ON POWL UT TO BE UNVOLVER A PROMIVE.",
+      "OCR_Output": "WAT POWL DS 244161 AND DS 244162 AL USS THAN CONTROL AND AC USS THAN PD ON POWL UT TO BE UNVOLVER A PROMIVE.",
+      "Correct": 1.0,
+      "Levenshtein": 0,
+      "CER": 0.0,
+      "WER": 0.0
+    }
+  },
+  "metadata": {
+    "overall_confidence": 0.91125,
+    "fields_extracted": 8,
+    "fields_validated": 7,
+    "requires_human_review": true,
+    "flagged_fields": [
+      "Defect_Message"
+    ],
+    "total_fields": 8
+  },
+  "raw_ocr_markdown": "# Aircraft Journey Summary\n\n|  Aircraft Model | Airbus A320  |\n| --- | --- |\n|  Registration Number | 9M-XX1  |\n|  Departure Airport | KML  |\n|  Arrival Airport | SIN  |\n|  Crew | 4  |\n|  Fuel | 12k  |\n|  Load | 150  |\n|  Defect Message | WAT POWL DS 244161 AND DS 244162 AL USS THAN CONTROL AND AC USS THAN PD ON POWL UT TO BE UNVOLVER A PROMIVE.  |",
+  "schema_version": "1.0"
+}
