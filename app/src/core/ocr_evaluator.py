@@ -64,7 +64,7 @@ def _get_metrics_result (extracted: Dict[str, Any], edited: Dict[str, Any]):
 
 def ocr_overall_evaluation(extracted: Dict[str, Any], edited: Dict[str, Any], ocr_text: str = "") -> Dict[str, Any]:
     """
-    Compare OCR vs. ground truth field by field and return comprehensive evaluation.
+    Combine all data.
     
     Args:
         extracted: The OCR extracted data
