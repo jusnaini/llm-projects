@@ -1,49 +1,58 @@
 # Aircraft Journey Form Extractor
 
-A backend service that converts images of handwritten aircraft journey summary forms into structured JSON using advanced OCR and LLM technologies.
+A prototype system that converts handwritten aircraft journey forms into structured JSON using OCR and LLM technology.
 
-## Executive Summary
+---
 
-## 🎯 Objective
-Prototype a minimal working path from image → JSON for aircraft journey forms, which are filled out (mostly handwritten) at the end of every flight and uploaded to maintenance portals.
+## 🎯 Overview
 
-## 📋 Project Scope
+**Problem**: Aircraft journey forms are filled out (mostly handwritten) after every flight and uploaded to maintenance portals. These need to be converted to structured data for downstream systems.
 
-**In Scope**
-- Convert form image to structured JSON
-- Data validation and accuracy metrics
-- Support human-in-the loop for data correction / Human-in-the-loop validation
-- Sava data locally and in cloud
-- Error handling 
-- Simple user interface
-- Extract predefined fields: Aircraft Model, Registration, Departure/Arrival Airports, Crew Count, Fuel, Load, Defect Messages
+**Solution**: Automated extraction pipeline using Mistral's OCR + LLM to convert images → JSON with human-in-the-loop validation.
 
-**Out of Scope**
-- Production hardening & advanced UI
-- Monitoring and visualization
-- CI/CD integration and deployment
-- Error logging
-- Model tuning and RAG for LLM
-- Complex image preprocessing
-- Advanced post-processing pipelines
-- OCR model modification
-- Access authentication
+**Deliverable**: Working prototype that processes form images one at a time and outputs structured JSON. The system can handle multiple forms sequentially through the UI.
 
+---
+
+---
+
+## 📋 Scope
+
+### What This Does
+- Extracts 8 key fields: Aircraft Model, Registration, Departure/Arrival Airports, Crew, Fuel, Load, Defect Message
+- Validates extracted data (IATA codes, aircraft models, numeric ranges)
+- Provides UI for human review and correction
+- Calculates accuracy metrics (CER, WER, Levenshtein distance)
+- Saves data locally and to AWS S3 (optional)
+- Accept only image format
+
+### What This Doesn't Do
+- Batch processing (processes one image at a time)
+- Concurrent multi-image extraction
+- Production monitoring/logging
+- CI/CD pipeline
+- Authentication/authorization
+- Image preprocessing (rotation, noise reduction)
+
+---
 
 ## 🎓 Assumptions & Limitations
 
 **Assumptions**
-- Image input (JPEG,JPG,PNG) and uploaded (not through camera)
-- Standard form layout is maintained
-- Handwriting is reasonably legible
-- The form quality is reasonably visible
-- Valid credentials for the LLM model
-- Form to extract is exposed/ no obstruction on the form
+- Image input (JPEG,JPG,PNG) and uploaded to the system
+- Images are reasonably clear (not heavily damaged)
+- Handwriting is legible (even if messy)
+- Forms are already oriented correctly
+- Internet connection available
+- Valid Mistrail API credentials
+
 
 **Limitations**
 - Single image processing (no batch optimization)
 - Require internet connection
 - API cost/Token limitation
+
+---
   
 ## 🏗️ Architecture & Design Choices
 
@@ -63,7 +72,8 @@ Prototype a minimal working path from image → JSON for aircraft journey forms,
               └──────────┘  └──────────┘
 ```
 
-
+### Key Architectural Decisions
+#### 1. Mistral OCR + LLM
 **Core Approach: Two-Stage OCR + LLM Pipeline**
 - `Mistral OCR (mistral-ocr-latest)` - Raw text extraction with ~90% accuracy
 - `Mistral LLM (pixtral-12b-latest)` - Structured parsing with contextual understanding
@@ -74,14 +84,14 @@ Prototype a minimal working path from image → JSON for aircraft journey forms,
 - `End-to-end pipeline` reduces complexity vs multi-tool chains
 - `High accuracy `justifies the API cost (do cost analysis here) 
 
-**🎯 Key Architectural Decisions**
-- Two-Stage OCR+LLM: Better accuracy than single-stage approaches
-- Dual Storage: Local for development + S3 for production readiness
-- Stateless API: Session management handled by frontend
-- Modular Core: Separated validation, evaluation, and OCR logic
-- Type Safety: Pydantic models throughout the data pipeline
+#### 2. FastAPI + Streamlit
+The assignment asks for "minimal working path," but forms have ambiguous/missing fields that need human review. So I built:
+- **FastAPI**: Stateless API for extraction, validation, and metrics
+- **Streamlit**: Simple UI for human-in-the-loop correction
+- **Trade-off**: More code complexity, but realistic workflow for production use
 
-### 🔧 Technical Stack
+
+### 🔧 Summary of technical stack choices & justification
 
 | **Layer**| **Technology**      |  **Purpose**                        | **Justification** |
 |----------|---------------------|-------------------------------------|--------------------|
@@ -94,40 +104,35 @@ Prototype a minimal working path from image → JSON for aircraft journey forms,
 
 
 
+---
 
-## 📁 Project Structure
-```Sequence
-=============
-BackEnd
-=============
-app/
-├── src/
-│   ├── settings.py           # Configuration
-│   ├── core/                 # Business logic
-│   │   ├── mistral_client.py # OCR + LLM processing
-│   │   ├── validator.py      # Field validation logic
-│   │   ├── ocr_evaluator.py  # Evaluation & metrics
-│   │   └── ocr_metrics.py    # Accuracy calculations
-│   ├── api/                  # FastAPI application
-│   │   ├── main.py          # App factory & configuration
-│   │   ├── router.py        # API route definitions
-│   │   ├── endpoint.py      # Business logic handlers
-│   │   └── schemas.py       # Pydantic models
-│   └── utils/               # Shared utilities
-│       ├── aws_utils.py     # S3 upload/download
-│       └── utils.py         # Common helpers & dataclasses
-├── notebooks/
-│   └── demo_ocr.ipynb       # Demonstration & testing
-├── tests/                   # Test suite
-└── requirements.txt         # Dependencies
-
-=============
-UserInterface
-=============
-frontend/
-   └── app.py                # Streamlit application
+## 📂 Project Structure
 
 ```
+app/src/
+├── core/
+│   ├── mistral_client.py    # OCR + LLM extraction
+│   ├── validator.py          # Field validation logic
+│   ├── ocr_evaluator.py      # Metrics compilation
+│   └── ocr_metrics.py        # CER/WER calculations
+├── api/
+│   ├── main.py               # FastAPI app
+│   ├── router.py             # Route definitions
+│   ├── endpoint.py           # Business logic
+│   └── request.py            # Pydantic schemas
+├── utils/
+│   ├── aws_utils.py          # S3 operations
+│   └── utils.py              # Shared utilities
+└── settings.py               # Configuration
+
+frontend/
+└── app.py                    # Streamlit UI
+
+demo/
+└── demo_ocr.py            # Core extraction demo
+```
+
+---
 
 ## 🔌 API Specification
 
@@ -166,24 +171,51 @@ frontend/
 
 
 
-## 📈 Performance
-**Accuracy Metrics (Sample Form)**
-- Character Error Rate (CER): 0.02
-- Word Error Rate (WER): 0.05
-- Field-level Accuracy: 95%
-- Overall Confidence: 91%
+---
 
-**Processing Time**
-- OCR Extraction: 2-3 seconds
-- LLM Parsing: 1-2 seconds
-- Total Pipeline: 3-5 seconds per form
+## 📊 Performance
 
+**Sample Results** (from provided test image):
 
+The system successfully extracted all 8 fields from the sample aircraft journey form:
+
+```json
+{
+  "Aircraft_Model": "Airbus A320",
+  "Registration_Number": "9M-XX1",
+  "Departure_Airport": "KUL",
+  "Arrival_Airport": "SIN",
+  "Crew": 4,
+  "Fuel": "12k",
+  "Load": 150,
+  "Defect_Message": null
+}
+```
+
+**Validation Results**:
+- All extracted fields passed validation rules
+- IATA codes validated correctly (KUL, SIN)
+- Registration format matched expected pattern
+- Numeric fields within reasonable ranges
+
+**Processing Time**: ~3-5 seconds per form (OCR + LLM parsing)
+
+**Accuracy Metrics**:
+The system includes CER (Character Error Rate), WER (Word Error Rate), and Levenshtein distance calculations to compare OCR output against ground truth when human corrections are provided.
+
+**Limitations of Current Testing**:
+- Tested on 1 sample form only (limited dataset)
+- Need more diverse samples to validate performance across:
+  - Different handwriting styles
+  - Varying image quality
+  - Different aircraft types
+  - Edge cases (missing/ambiguous fields)
+
+---
 
 
 ## 📦 Installation & Setup
 
-## Installation Steps
 
 ### 1. Clone the Repository
 ```bash
@@ -210,7 +242,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 4. Create Required Directories
+### 4. Create Required Directories [Optional]
 ```bash
 # Create data directories
 mkdir -p data/uploads
@@ -218,8 +250,6 @@ mkdir -p data/extracted
 mkdir -p data/edited
 mkdir -p data/results
 
-# Create logs directory (optional)
-mkdir -p logs
 ```
 
 ## Environment Configuration
