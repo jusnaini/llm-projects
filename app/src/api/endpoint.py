@@ -14,10 +14,10 @@ from .request import EvaluationRequest
 
 # Configuration
 class Config:
-    UPLOAD_DIR = Path("../data/uploads")
-    EXTRACTED_DIR = Path("../data/extracted")
-    EDITED_DIR = Path("../data/edited")
-    RESULTS_DIR = Path("../data/results")
+    UPLOAD_DIR = Path("data/uploads")
+    EXTRACTED_DIR = Path("data/extracted")
+    EDITED_DIR = Path("data/edited")
+    RESULTS_DIR = Path("data/results")
     
     EXTRACTED_PREFIX = "ocr_results/extracted"
     EDITED_PREFIX = "ocr_results/edited"
