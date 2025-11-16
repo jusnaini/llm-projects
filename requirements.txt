@@ -13,3 +13,7 @@ numpy
 opencv-python-headless
 mistralai
 python-dotenv
+pandas
+numpy
+python-Levenshtein
+
