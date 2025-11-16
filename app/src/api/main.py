@@ -1,7 +1,14 @@
 # Fix the path for relative imports
-import sys 
-import os
-sys.path.append(os.path.dirname(__file__))
+# import sys 
+# import os
+# sys.path.append(os.path.dirname(__file__))
+import sys
+from pathlib import Path
+
+# Add the project root (app/src) to PYTHONPATH
+ROOT_DIR = Path(__file__).resolve().parents[1]
+sys.path.append(str(ROOT_DIR))
+
 
 
 from fastapi import FastAPI
