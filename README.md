@@ -315,9 +315,9 @@ cd /path/to/aircraft-journey-extractor
 # Activate virtual environment
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Start FastAPI backend
-cd app/src/api
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+# Start FastAPI backend (run from root)
+cd aircraft-journey-extractor
+uvicorn app.src.api.main:app --reload
 ```
 
 You should see:
