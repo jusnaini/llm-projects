@@ -422,7 +422,7 @@ ModuleNotFoundError: No module named 'fastapi'
 
 **Solution:**
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt streamlit
 ```
 
 #### 3. Port Already in Use
